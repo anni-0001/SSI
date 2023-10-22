@@ -1,0 +1,50 @@
+version: '3'
+services:     
+  dev2:
+    container_name: dev2_server
+    build:
+      context: .
+      dockerfile: dockerfile-server
+    ports:
+      - "8005:8080"
+    networks: 
+       SSID:
+          ipv4_address: 172.50.0.3
+    hostname: dev2 server
+    volumes:
+      - /Users/annika/Documents/SSI-Simulator:/purple
+    command: sleep 10000
+    stdin_open: true
+    tty: true
+              
+  dev1:
+    container_name: dev1_client
+    build:
+      context: .
+      dockerfile: dockerfile-client
+    ports:
+      - "2201:22"
+      - "9991:9000"
+      - "8001:80"
+      - "8006:8080"
+    networks: 
+       SSID:
+          ipv4_address: 172.50.0.2
+    hostname: dev1 client
+    volumes:
+      - /Users/annika/Documents/SSI-Simulator:/purple
+    command: tcpdump -i eth0 src 172.50.0.3 -w icmp_logs
+    depends_on:
+      - dev2
+    stdin_open: true
+    tty: true
+              
+volumes:
+    purple:
+networks:
+    SSID:
+        ipam:
+            driver: default
+            config:
+                - subnet: 172.50.0.0/24
+                  gateway: 172.50.0.254
