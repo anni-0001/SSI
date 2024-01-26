@@ -1,6 +1,7 @@
 import subprocess
 import os
 import time
+import socket
 # import git
 
 # Create user
@@ -52,10 +53,13 @@ if os.path.isdir(ruby_gem_bin_path):
     # Prepend the Ruby Gems bin directory to the PATH environment variable
     os.environ['PATH'] = f"{ruby_gem_bin_path}:{os.environ['PATH']}"
 
-os.chdir("/home/ssh_user/dns/server")
+os.chdir(f"/home/{new_username}/dns/server")
 
-# Install bundler
+# Install bundler 
+# i used to gem --user-install bunlder and it broke the build, saying it neede more path information
 subprocess.run(["gem", "install","bundler"])
+subprocess.run(["gem", "install","sha3"])
+
 
 # Install dependencies
 subprocess.run(["bundle", "install"])
@@ -63,9 +67,26 @@ subprocess.run(["bundle", "install"])
 # Start SSH service
 subprocess.run(["service", "ssh", "start"])
 
+os.chdir(f"/home/{new_username}/dns/client")
+subprocess.run("make")
+print("client built")
+
+hostname = socket.gethostname()
+output_file = f"/pink/output_{hostname}.pcap"
+
 # Start tcpdump as a subprocess
-tcpdump_command = ["tcpdump", "-i", "eth0", "-w", "output.pcap"]
+tcpdump_command = ["tcpdump", "-i", "eth0", "-w", output_file]
 subprocess.Popen(tcpdump_command)
 
 # Sleep for 10,000 seconds
-time.sleep(10000)
+time.sleep(1000000)
+
+
+
+# dns client command:  
+# ./dnscat --dns server=172.20.0.3,port=53 --secret=abc
+
+# dns server: 
+# ruby dnscat2.rb --secret=abc
+# session server: session -i 1
+# ping 172.20.0.2

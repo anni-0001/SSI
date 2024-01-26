@@ -2,7 +2,7 @@ FROM ubuntu as build
 
 # Update the package index and install essential packages
 RUN apt-get update && \
-    apt-get install -y iproute2 sudo git python3 coreutils tcpdump vim tmux openssh-server ruby-dev python3 python3-pip iputils-ping
+    apt-get install -y iproute2 sudo git python3 coreutils tcpdump vim tmux openssh-server ruby-dev python3 python3-pip iputils-ping build-essential
 
 # Copy your internal.py file to the container
 COPY internal.py /internal.py

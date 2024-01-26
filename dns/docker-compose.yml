@@ -14,12 +14,12 @@ services:
       # - "2321:23"
       - "2221:22"
     volumes:
-      - /Users/annika/Documents/SSI/dns:/pink
+      - /Users/annika/Documents/SSI/dns/pink:/pink
     networks:
       - icmp_test
     tty: true
     # network_mode: host
-    # hostname: icmptunnel-client
+    hostname: icmptunnel-client
     # image: ubuntu
 
   dnstunnel-server:
@@ -34,12 +34,12 @@ services:
       - "2319:23"
       - "2223:22"
     volumes:
-      - /Users/annika/Documents/SSI/dns:/pink
+      - /Users/annika/Documents/SSI/dns/pink:/pink
     networks:
       - icmp_test
     tty: true
     # network_mode: host
-    # hostname: dnstunnel-server
+    hostname: dnstunnel-server
     # image: ubuntu
 
 networks:
