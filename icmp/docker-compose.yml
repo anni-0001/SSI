@@ -1,0 +1,61 @@
+version: '3'
+services:
+
+
+  # httptunnel-proxy:
+    # container_name: httptunnel-proxy
+    # build: .
+    # command: python3 internal.py
+    # ports:
+    #   - "9898:8888"
+    #   - "2324:2323"
+    #   - "2323:23"
+    #   - "2242:22"
+    # volumes:
+    #   - /Users/annika/Documents/SSI:/pink
+    # networks:
+    #   - icmp_test
+    # tty: true
+    # # network_mode: host
+    # hostname: httptunnel-proxy
+    # image: ubuntu
+
+  icmptunnel-client:
+    container_name: icmptunnel-client
+    build: .
+    command: python3 internal.py
+    ports:
+      - "8887:8888"
+      - "2322:2323"
+      - "2321:23"
+      - "2221:22"
+    volumes:
+      - /Users/annika/Documents/SSI:/pink
+    networks:
+      - icmp_test
+    tty: true
+    # network_mode: host
+    hostname: icmptunnel-client
+    # image: ubuntu
+
+  icmptunnel-server:
+    container_name: icmptunnel-server
+    build: .
+    command: python3 internal.py
+    ports:
+      - "8886:8888"
+      - "2320:2323"
+      - "2319:23"
+      - "2223:22"
+    volumes:
+      - /Users/annika/Documents/SSI:/pink
+    networks:
+      - icmp_test
+    tty: true
+    # network_mode: host
+    hostname: icmptunnel-server
+    # image: ubuntu
+
+networks:
+  icmp_test:
+    driver: bridge

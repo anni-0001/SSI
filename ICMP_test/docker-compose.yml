@@ -1,50 +1,25 @@
 version: '3'
-services:     
-  dev2:
-    container_name: dev2_server
-    build:
-      context: .
-      dockerfile: dockerfile-server
-    ports:
-      - "8005:8080"
-    networks: 
-       SSID:
-          ipv4_address: 172.50.0.3
-    hostname: dev2 server
-    volumes:
-      - /Users/annika/Documents/SSI-Simulator:/purple
-    command: sleep 10000
-    stdin_open: true
-    tty: true
-              
-  dev1:
-    container_name: dev1_client
+services:
+  icmptunnel-client:
+    container_name: icmptunnel-client
     build:
       context: .
       dockerfile: dockerfile-client
-    ports:
-      - "2201:22"
-      - "9991:9000"
-      - "8001:80"
-      - "8006:8080"
-    networks: 
-       SSID:
-          ipv4_address: 172.50.0.2
-    hostname: dev1 client
-    volumes:
-      - /Users/annika/Documents/SSI-Simulator:/purple
-    command: tcpdump -i eth0 src 172.50.0.3 -w icmp_logs
-    depends_on:
-      - dev2
-    stdin_open: true
+    command: sleep 10000
+    networks:
+      - icmp_test
     tty: true
-              
-volumes:
-    purple:
+
+  icmptunnel-server:
+    container_name: icmptunnel-server
+    build: 
+      context: .
+      dockerfile: dockerfile-server
+    command: sleep 10000
+    networks:
+      - icmp_test
+    tty: true
+
 networks:
-    SSID:
-        ipam:
-            driver: default
-            config:
-                - subnet: 172.50.0.0/24
-                  gateway: 172.50.0.254
+  icmp_test:
+    driver: bridge

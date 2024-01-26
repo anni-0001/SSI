@@ -1,0 +1,47 @@
+version: '3'
+services:
+
+
+  dnstunnel-client:
+    container_name: dnstunnel-client
+    build: 
+      # context: .
+      dockerfile: dockerfile-client
+    command: python3 internal.py
+    ports:
+      - "8887:8888"
+      - "2322:2323"
+      # - "2321:23"
+      - "2221:22"
+    volumes:
+      - /Users/annika/Documents/SSI/dns:/pink
+    networks:
+      - icmp_test
+    tty: true
+    # network_mode: host
+    # hostname: icmptunnel-client
+    # image: ubuntu
+
+  dnstunnel-server:
+    container_name: dnstunnel-server
+    build: 
+      # context: .
+      dockerfile: dockerfile-server
+    command: python3 internal.py
+    ports:
+      - "8886:8888"
+      - "2320:2323"
+      - "2319:23"
+      - "2223:22"
+    volumes:
+      - /Users/annika/Documents/SSI/dns:/pink
+    networks:
+      - icmp_test
+    tty: true
+    # network_mode: host
+    # hostname: dnstunnel-server
+    # image: ubuntu
+
+networks:
+  icmp_test:
+    driver: bridge
