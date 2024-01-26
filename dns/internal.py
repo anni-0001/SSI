@@ -43,10 +43,19 @@ except subprocess.CalledProcessError as e:
     print(f"Error cloning repository: {e.stderr}")
 
 # Change directory
+
+# Define the path to the user's Ruby Gems bin directory
+ruby_gem_bin_path = os.path.expanduser('~/.local/share/gem/ruby/3.0.0/bin')
+
+# Check if the directory exists
+if os.path.isdir(ruby_gem_bin_path):
+    # Prepend the Ruby Gems bin directory to the PATH environment variable
+    os.environ['PATH'] = f"{ruby_gem_bin_path}:{os.environ['PATH']}"
+
 os.chdir("/home/ssh_user/dns/server")
 
 # Install bundler
-subprocess.run(["gem", "install", "bundler"])
+subprocess.run(["gem", "install","bundler"])
 
 # Install dependencies
 subprocess.run(["bundle", "install"])
