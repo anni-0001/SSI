@@ -1,67 +1,62 @@
 import subprocess
+import os
 import time
+# import git
+
+# Create user
+new_username = 'ssh_user'
+
+try:
+    subprocess.run(['getent', 'passwd', new_username], check=True)
+    print(f"User '{new_username}' already exists.")
+except subprocess.CalledProcessError:
+    # User doesn't exist, create it
+    try:
+        subprocess.run(['sudo', 'useradd', '-m', new_username], check=True)
+        print(f"User '{new_username}' created successfully.")
+    except subprocess.CalledProcessError as e:
+        print(f"Error creating user '{new_username}': {e.stderr}")
+# subprocess.run(f'sudo useradd -m {new_username}', shell=True, check=True)
+
+# Set user password
+new_password = 'password'
+subprocess.run(f'echo "{new_username}:{new_password}" | sudo chpasswd', shell=True, check=True)
+
+# Add user to sudoers group
+subprocess.run(f'sudo usermod -aG sudo {new_username}', shell=True, check=True)
 
 repository_url1 = "https://github.com/iagox86/dnscat2.git"
 
-
-# clone icmptunnel
-
-subprocess.run("echo 'hi' > /hi.txt", shell=True)
-
+# Clone repository
 try:
-    subprocess.run("pwd")
-    result = subprocess.run(["git", "clone", repository_url1, "/"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, check=True)
-    # result = subprocess.run(["git", "clone", repository_url2, "/"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, check=True)
-    print("Repository cloned successfully.")
+    subprocess.run(["git", "clone", repository_url1, "/home/ssh_user/dns"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, check=True)
+    os.chdir("/home/ssh_user/dns/server")
+
+    # List the contents of the repository directory
+    repo_contents = os.listdir()
+
+    # Print the contents of the repository directory
+    print("Contents of the cloned repository:")
+    for item in repo_contents:
+        print(item)
 except subprocess.CalledProcessError as e:
     print(f"Error cloning repository: {e.stderr}")
 
+# Change directory
+os.chdir("/home/ssh_user/dns/server")
 
-# installing dnscat2
-try:
+# Install bundler
+subprocess.run(["gem", "install", "bundler"])
 
-    subprocess.run("cd",  "/dnscat2/server/")
-    subprocess.run("gem", "install bundler")
-    subprocess.run("bundle", "install")
-except subprocess.CalledProcessError as e:
-    print(f"Error cloning repository: {e.stderr}")
+# Install dependencies
+subprocess.run(["bundle", "install"])
 
-# SED ip values into the server/client config
-ssh_command = ["service", "ssh", "start"]
-subprocess.run(ssh_command)
+# Start SSH service
+subprocess.run(["service", "ssh", "start"])
 
-new_username = 'ssh_user'
-
-# Create the new user
-create_user_command = f'sudo useradd -m {new_username}'
-subprocess.run(create_user_command, shell=True, check=True)
-
-# Set the user's password (replace [new_password] with the desired password)
-new_password = 'password'
-set_password_command = f'echo "{new_username}:{new_password}" | sudo chpasswd'
-subprocess.run(set_password_command, shell=True, check=True)
-
-# Add the user to the sudoers group
-add_to_sudoers_command = f'sudo usermod -aG sudo {new_username}'
-subprocess.run(add_to_sudoers_command, shell=True, check=True)
-
-
+# Start tcpdump as a subprocess
 tcpdump_command = ["tcpdump", "-i", "eth0", "-w", "output.pcap"]
+subprocess.Popen(tcpdump_command)
 
-# Start tcpdump as a subprocess and capture the output
-try:
-    tcpdump_process = subprocess.Popen(tcpdump_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    stdout, stderr = tcpdump_process.communicate()
-    if tcpdump_process.returncode == 0:
-        print("tcpdump started successfully.")
-    else:
-        print(f"Error starting tcpdump: {stderr.decode()}")
-except Exception as e:
-    print(f"An error occurred: {str(e)}")
-
-
+# Sleep for 10,000 seconds
 time.sleep(10000)
-
-
-# make configurations automatic for icmp tunnel
-# implement ICMP listneers & ssh connection into code base 
