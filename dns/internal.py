@@ -78,7 +78,7 @@ output_file = f"/pink/output_{hostname}.pcap"
 tcpdump_command = ["tcpdump", "-i", "eth0", "-w", output_file]
 subprocess.Popen(tcpdump_command)
 
-
+os.chdir("/pink")
 # dns tunneling: initiate client & server listner in tmux session
 # dns server first: 
 # ruby dnscat2.rb --secret=abc
