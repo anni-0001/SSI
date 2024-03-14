@@ -19,7 +19,7 @@ services:
       - icmp_test
     tty: true
     # network_mode: host
-    hostname: icmptunnel-client
+    hostname: client
     # image: ubuntu
 
   dnstunnel-server:
@@ -39,7 +39,7 @@ services:
       - icmp_test
     tty: true
     # network_mode: host
-    hostname: dnstunnel-server
+    hostname: server
     # image: ubuntu
 
 networks:

